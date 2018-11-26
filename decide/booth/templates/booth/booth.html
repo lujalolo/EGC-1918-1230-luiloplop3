@@ -5,16 +5,20 @@
     <h1>{{ voting.id }} - {{ voting.name }}</h1>
 
     <div id="login">
+        <p>If you have not created an account yet, then please <button onClick="panel('signup')">Sign up</button></p>
         <label for="username">{% trans "Username" %}</label>
         <input type="text" id="username" name="username" value=""/>
         <br/>
         <label for="password">{% trans "Password" %}</label>
-        <input type="password" id="password" name="username" value=""/>
+        <input type="password" id="password" name="password" value=""/>
         <br/>
         <input type="submit" value="{% trans "Login" %}" onClick="decideLogin()"/>
     </div>
 
     <div id="voting">
+        {% load account %}
+        {% user_display user as name %}
+        {% blocktrans %}Successfully signed in as {{name}}.{% endblocktrans %}
         <a href="#" onClick="decideLogout()">{% trans "logout" %}</a>
         <h2>{{ voting.question.desc }}</h2>
 
@@ -67,7 +71,7 @@
 
           return fetch(url, fdata)
           .then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
                 return response.json();
             } else {
                 return Promise.reject(response.statusText);
@@ -92,7 +96,7 @@
             }
             postData("{{store_url}}" + "/store/", data)
               .then(data => {
-                alert("{% trans "Conglatulations. Your vote has been sent" %}")
+                alert("{% trans "Congratulations. Your vote has been sent" %}")
                 console.log(v);
               })
               .catch(error => {
@@ -102,8 +106,7 @@
         }
 
         function decideLogout() {
-            var data = { token: token };
-            postData("{{auth_url}}" + "/authentication/logout/", data);
+            postData("{{auth_url}}" + "/rest-auth/logout/");
 
             token = null;
             user = null;
@@ -127,10 +130,10 @@
                 username: document.querySelector("#username").value,
                 password: document.querySelector("#password").value,
             };
-            postData("{{auth_url}}" + "/authentication/login/", data)
+            postData("{{auth_url}}" + "/rest-auth/login/", data)
               .then(data => {
-                document.cookie = 'decide='+data.token+';';
-                token = data.token;
+                document.cookie = 'decide='+data.key+';';
+                token = data.key;
                 decideUser();
               })
               .catch(error => {

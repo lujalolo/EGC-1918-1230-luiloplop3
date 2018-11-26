@@ -8,4 +8,5 @@ urlpatterns = [
     path('login/', obtain_auth_token),
     path('logout/', LogoutView.as_view()),
     path('getuser/', GetUserView.as_view()),
+    path('signup/',include('rest_auth.registration.urls'))
 ]

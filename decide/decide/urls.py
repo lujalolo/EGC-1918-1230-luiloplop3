@@ -23,7 +23,9 @@ schema_view = get_swagger_view(title='Decide API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('doc/', schema_view)
+    path('doc/', schema_view),
+    path('accounts/', include('allauth.urls')),
+    path('rest-auth/',include('rest_auth.urls')),
 ]
 
 for module in settings.MODULES:
