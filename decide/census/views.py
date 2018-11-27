@@ -1,3 +1,4 @@
+from django.views.generic import TemplateView
 from django.db.utils import IntegrityError
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics
@@ -12,6 +13,9 @@ from rest_framework.status import (
 
 from base.perms import UserIsStaff
 from .models import Census
+from django.http import Http404
+
+from base import mods
 
 
 class CensusCreate(generics.ListCreateAPIView):
@@ -49,3 +53,19 @@ class CensusDetail(generics.RetrieveDestroyAPIView):
         except ObjectDoesNotExist:
             return Response('Invalid voter', status=ST_401)
         return Response('Valid voter')
+
+
+class CensusView(TemplateView):
+    template_name = 'census/census.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vid = kwargs.get('voting_id', 0)
+
+        try:
+            r = mods.get('voting', params={'id': vid})
+            context['voting'] = r[0]
+        except:
+            raise Http404
+
+        return context
