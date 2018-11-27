@@ -5,16 +5,20 @@
     <h1>{{ voting.id }} - {{ voting.name }}</h1>
 
     <div id="login">
+        <p>If you have not created an account yet, then please <button onClick="panel('signup')">Sign up</button></p>
         <label for="username">{% trans "Username" %}</label>
         <input type="text" id="username" name="username" value=""/>
         <br/>
         <label for="password">{% trans "Password" %}</label>
-        <input type="password" id="password" name="username" value=""/>
+        <input type="password" id="password" name="password" value=""/>
         <br/>
         <input type="submit" value="{% trans "Login" %}" onClick="decideLogin()"/>
     </div>
 
     <div id="voting">
+        {% load account %}
+        {% user_display user as name %}
+        {% blocktrans %}Successfully signed in as {{name}}.{% endblocktrans %}
         <a href="#" onClick="decideLogout()">{% trans "logout" %}</a>
         <h2>{{ voting.question.desc }}</h2>
 
@@ -26,6 +30,21 @@
 
         <input type="submit" value="{% trans "Vote" %}" onClick="decideSend()"/>
     </div>
+
+    <div id="signup">
+        <p>Already have an account? <button onClick="panel('login')">Log in</button></p>
+        <label for="username">{% trans "Username" %}</label>
+        <input type="text" id="username_signup" name="username" value=""/>
+        <br/>
+        <label for="password1">{% trans "Password" %}</label>
+        <input type="password" id="password1" name="password1" value=""/>
+        <br/>
+        <label for="password2">{% trans "Password(again)" %}</label>
+        <input type="password" id="password2" name="password2" value=""/>
+        <br/>
+        <input type="submit" value="{% trans "Sign up" %}" onClick="signUp()"/>
+    </div>
+
 {% endblock %}
 
 {% block extrabody %}
@@ -67,7 +86,7 @@
 
           return fetch(url, fdata)
           .then(response => {
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
                 return response.json();
             } else {
                 return Promise.reject(response.statusText);
@@ -92,7 +111,7 @@
             }
             postData("{{store_url}}" + "/store/", data)
               .then(data => {
-                alert("{% trans "Conglatulations. Your vote has been sent" %}")
+                alert("{% trans "Congratulations. Your vote has been sent" %}")
                 console.log(v);
               })
               .catch(error => {
@@ -102,8 +121,7 @@
         }
 
         function decideLogout() {
-            var data = { token: token };
-            postData("{{auth_url}}" + "/authentication/logout/", data);
+            postData("{{auth_url}}" + "/rest-auth/logout/");
 
             token = null;
             user = null;
@@ -127,10 +145,28 @@
                 username: document.querySelector("#username").value,
                 password: document.querySelector("#password").value,
             };
-            postData("{{auth_url}}" + "/authentication/login/", data)
+            postData("{{auth_url}}" + "/rest-auth/login/", data)
               .then(data => {
-                document.cookie = 'decide='+data.token+';';
-                token = data.token;
+                document.cookie = 'decide='+data.key+';';
+                token = data.key;
+                decideUser();
+              })
+              .catch(error => {
+                alert("{% trans "Error: " %}" + error);
+                console.error(error);
+              });
+        }
+
+        function signUp() {
+            var data = {
+                username: document.querySelector("#username_signup").value,
+                password1: document.querySelector("#password1").value,
+                password2: document.querySelector("#password2").value
+            };
+            postData("{{auth_url}}" + "/authentication/signup/", data)
+              .then(data => {
+                document.cookie = 'decide='+data.key+';';
+                token = data.key;
                 decideUser();
               })
               .catch(error => {
@@ -144,11 +180,18 @@
                 case 'login':
                     document.querySelector("#voting").style.display = "none";
                     document.querySelector("#login").style.display = "block";
+                    document.querySelector("#signup").style.display = "none";
                     break;
                 case 'voting':
                 default:
                     document.querySelector("#voting").style.display = "block";
                     document.querySelector("#login").style.display = "none";
+                    document.querySelector("#signup").style.display = "none";
+                    break;
+                case 'signup':
+                    document.querySelector("#voting").style.display = "none";
+                    document.querySelector("#login").style.display = "none";
+                    document.querySelector("#signup").style.display = "block";
                     break;
             };
         }
