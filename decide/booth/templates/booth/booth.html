@@ -30,6 +30,21 @@
 
         <input type="submit" value="{% trans "Vote" %}" onClick="decideSend()"/>
     </div>
+
+    <div id="signup">
+        <p>Already have an account? <button onClick="panel('login')">Log in</button></p>
+        <label for="username">{% trans "Username" %}</label>
+        <input type="text" id="username_signup" name="username" value=""/>
+        <br/>
+        <label for="password1">{% trans "Password" %}</label>
+        <input type="password" id="password1" name="password1" value=""/>
+        <br/>
+        <label for="password2">{% trans "Password(again)" %}</label>
+        <input type="password" id="password2" name="password2" value=""/>
+        <br/>
+        <input type="submit" value="{% trans "Sign up" %}" onClick="signUp()"/>
+    </div>
+
 {% endblock %}
 
 {% block extrabody %}
@@ -142,16 +157,41 @@
               });
         }
 
+        function signUp() {
+            var data = {
+                username: document.querySelector("#username_signup").value,
+                password1: document.querySelector("#password1").value,
+                password2: document.querySelector("#password2").value
+            };
+            postData("{{auth_url}}" + "/authentication/signup/", data)
+              .then(data => {
+                document.cookie = 'decide='+data.key+';';
+                token = data.key;
+                decideUser();
+              })
+              .catch(error => {
+                alert("{% trans "Error: " %}" + error);
+                console.error(error);
+              });
+        }
+
         function panel(p) {
             switch(p) {
                 case 'login':
                     document.querySelector("#voting").style.display = "none";
                     document.querySelector("#login").style.display = "block";
+                    document.querySelector("#signup").style.display = "none";
                     break;
                 case 'voting':
                 default:
                     document.querySelector("#voting").style.display = "block";
                     document.querySelector("#login").style.display = "none";
+                    document.querySelector("#signup").style.display = "none";
+                    break;
+                case 'signup':
+                    document.querySelector("#voting").style.display = "none";
+                    document.querySelector("#login").style.display = "none";
+                    document.querySelector("#signup").style.display = "block";
                     break;
             };
         }
