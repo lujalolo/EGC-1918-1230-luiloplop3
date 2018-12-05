@@ -1,0 +1,95 @@
+{% load i18n static %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Decide Locaste</title>
+</head>
+
+<body>
+	<header>
+		<a href="/"><img src="{% static 'decide.jpg'%}" alt="Decide Locaste" width="15%" height="200px"></a>
+	</header>
+	<div>
+		<h1>Welcome to Decide Locaste! Your web platform for voting</h1>
+		{% load account %}
+        {% user_display user as name %}
+        {% blocktrans %}Successfully signed in as {{name}}.{% endblocktrans %}
+        <a href="{{index_url}}" onClick="decideLogout()">{% trans "logout" %}</a>
+	</div>
+
+	<div>
+		<button type="button" value="Sign in" onclick="window.location.href='authentication/sign-in'">Sign in</button>
+		<button type="button" value="Sign up" onclick="window.location.href='authentication/sign-up'">Sign up</button>
+	</div>
+
+	<footer>
+		<h3>Decide Locaste 2019 &copy; </h3>
+	</footer>
+
+</body>
+</html>
+
+<script >
+	 var token = null;
+     var user = null;
+
+     function decideUser() {
+            var data = { token: token };
+            postData("{{auth_url}}" + "/authentication/getuser/", data)
+              .then(data => {
+                user = data;
+     
+              }).catch(error => {
+                alert("{% trans "Error: " %}" + error);
+              });
+       	}
+
+	function postData(url, data) {
+          // Default options are marked with *
+          var fdata = {
+            body: JSON.stringify(data),
+            headers: {
+              'content-type': 'application/json',
+            },
+            method: 'POST',
+          };
+
+          if (token) {
+              fdata.headers['Authorization'] = 'Token ' + token;
+          }
+
+          return fetch(url, fdata)
+          .then(response => {
+            if (response.status === 200 || response.status === 201) {
+                return response.json();
+            } else {
+                return Promise.reject(response.statusText);
+            }
+          });
+        }
+
+	function decideLogout() {
+            postData("{{auth_url}}" + "/rest-auth/logout/");
+
+            token = null;
+            user = null;
+            document.cookie = 'decide=; path=/';
+    }
+
+    function init() {
+            var cookies = document.cookie.split("; ");
+            cookies.forEach((c) => {
+                var cs = c.split("=");
+                if (cs[0] == 'decide' && cs[1]) {
+                    token = cs[1];
+                    decideUser();
+                }
+            });
+     }
+
+    init();
+
+
+</script>
