@@ -13,7 +13,7 @@
 	<header>
 		<a href="/"><img src="{% static 'decide.jpg'%}" alt="Decide Locaste" width="15%" height="200px"></a>
 	</header>
-
+{% if not user.is_authenticated %}
 	<div>
 		<h1>Sign in</h1>
 		<h2>Please enter your username and your password</h2>
@@ -29,11 +29,10 @@
         <br/>
         <input type="submit" value="{% trans "Login" %}" onClick="decideLogin()"/>
     </div>
-
+  {% endif %}
 	<div>
-		<!--<h3>Enter with Facebook</h3><a href="index"><img src="facebook.png" width="5%"></a> <br>
-		
-		<h3>Enter with Google</h3><a href="index"><img src="google.jpg" width="7%"></a> <br>-->
+		<!--<h3>{% trans "Log in with Facebook"%}</h3><a href="/"><img src="{% static 'facebook.png'%}" width="5%"></a> <br>
+		<h3>{% trans "Log in with Google"%}</h3><a href="/"><img src="{% static 'google.jpg'%}" width="7%"></a> <br>-->
 	</div>
 	<footer>
 		<h3>Decide Locaste 2019 &copy; </h3> 
@@ -101,8 +100,6 @@
                 console.error(error);
               });
         }
-
-     
 
         function init() {
             var cookies = document.cookie.split("; ");

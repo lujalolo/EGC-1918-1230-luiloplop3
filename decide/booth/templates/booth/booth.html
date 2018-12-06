@@ -83,7 +83,6 @@
             var bigmsg = BigInt.fromJSONObject(msg);
             console.log(bigmsg);
             var cipher = ElGamal.encrypt(bigpk, bigmsg);
-
             return cipher;
         }
 
@@ -111,8 +110,9 @@
 
             token = null;
             user = null;
-            document.cookie = 'decide=; path="/"';
+            document.cookie = 'decide=; path=/';
             panel('login');
+            window.location.href = "/authentication/logout";
         }
 
         function decideUser() {
@@ -120,7 +120,6 @@
             postData("{{auth_url}}" + "/authentication/getuser/", data)
               .then(data => {
                 user = data;
-                console.log(user);
                 panel('voting');
               }).catch(error => {
                 alert("{% trans "Error: " %}" + error);
@@ -134,7 +133,7 @@
             };
             postData("{{auth_url}}" + "/rest-auth/login/", data)
               .then(data => {
-                document.cookie = 'decide='+data.key+';';
+                document.cookie = 'decide='+data.key+'; path=/';
                 token = data.key;
                 decideUser();
               })
