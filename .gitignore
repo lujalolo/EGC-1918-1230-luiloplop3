@@ -99,9 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
-
-decide/\.idea/decide\.iml
-
-decide/\.idea/workspace\.xml
+\.idea/
 
 *.xml
