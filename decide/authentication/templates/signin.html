@@ -2,17 +2,7 @@
 {% load i18n static %}
 
 {% block content %}
-<!--<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>Decide Locaste</title>
-</head>
 
-<body>
-	<header>
-		<a href="/"><img src="{% static 'decide.jpg'%}" alt="Decide Locaste" width="15%" height="200px"></a>
-	</header>-->
 {% if not user.is_authenticated %}
 	<div>
 		<h1>Sign in</h1>
@@ -29,17 +19,12 @@
         <br/>
         <input type="submit" value="{% trans "Login" %}" onClick="decideLogin()"/>
     </div>
-  {% endif %}
 	<!--<div>
 		<h3>{% trans "Log in with Facebook"%}</h3><a href="/"><img src="{% static 'facebook.png'%}" width="5%"></a> <br>
 		<h3>{% trans "Log in with Google"%}</h3><a href="/"><img src="{% static 'google.jpg'%}" width="7%"></a> <br>
-	</div>
-	<footer>
-		<h3>Decide Locaste 2019 &copy; </h3> 
-	</footer>
+	</div>-->
+  {% endif %}
 
-</body>
-</html>-->
 {% endblock %}
 {% block extrabody %}
 
