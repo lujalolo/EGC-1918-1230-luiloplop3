@@ -15,31 +15,27 @@ class GetUserView(APIView):
         return Response(UserSerializer(tk.user, many=False).data)
 
 
-class LogoutView(APIView):
-    def post(self, request):
-        key = request.data.get('token', '')
-        try:
-            tk = Token.objects.get(key=key)
-            tk.delete()
-        except ObjectDoesNotExist:
-            pass
+class LogoutView(TemplateView):
+    template_name="logout.html"
+    def get_context_data(self):
+        context=super().get_context_data()
+        return context
 
-        return Response({})
 
 class IndexView(TemplateView):
     template_name="index.html"
-    def get_context_date(self):
-        context=super(Index, self).get_context_data()
+    def get_context_data(self):
+        context=super().get_context_data()
         return context
 
 class SigninView(TemplateView):
     template_name="signin.html"
-    def get_context_date(self):
-        context=super(Signin, self).get_context_data()
+    def get_context_data(self):
+        context=super().get_context_data()
         return context
 
 class SignupView(TemplateView):
     template_name="signup.html"
-    def get_context_date(self):
-        context=super(Signup, self).get_context_data()
+    def get_context_data(self):
+        context=super().get_context_data()
         return context

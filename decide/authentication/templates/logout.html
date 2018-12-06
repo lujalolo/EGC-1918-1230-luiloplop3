@@ -1,0 +1,12 @@
+{% extends "account/base.html" %}
+
+{% load i18n static%}
+
+{% block head_title %}{% trans "You have signed out."%}{% endblock %}
+
+	
+
+{% block content %}
+    <a href="/"><img src="{% static 'decide.jpg'%}" alt="Decide Locaste" width="15%" height="200px"></a>
+    <p>{% trans "You have signed out."%}</p>
+{% endblock %}
