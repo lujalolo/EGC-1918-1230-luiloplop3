@@ -1,16 +1,9 @@
+{% extends 'base_template.html' %}
 {% load i18n static %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8">
-	<title>Decide Locaste</title>
-</head>
 
-<body>
-	<header>
-		<a href="/"><img src="{% static 'decide.jpg'%}" alt="Decide Locaste" width="15%" height="200px"></a>
-	</header>
+
+{% block content %}
   <h1>Welcome to Decide Locaste! Your web platform for voting</h1>
 	{% if user.is_authenticated %}
     <div>
@@ -25,14 +18,10 @@
       <button type="button" value="Sign up" onclick="window.location.href='authentication/sign-up'">Sign up</button>
     </div>
   {% endif %}
+{% endblock %}
 
-	<footer>
-		<h3>Decide Locaste 2019 &copy; </h3>
-	</footer>
 
-</body>
-</html>
-
+{% block extrabody %}
     <script>
         var token = null;
         var user = null;
@@ -95,3 +84,4 @@
         init();
 
     </script>
+    {% endblock %}
