@@ -99,9 +99,6 @@ ENV/
 
 # mypy
 .mypy_cache/
-*.xml
-*.iml
-
 \.idea/
 
-*.sqlite3
+*.xml
