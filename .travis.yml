@@ -12,12 +12,17 @@ before_install:
 - cd decide
 install: 
 - pip install -r ../requirements.txt
+- pip install -U pip
+- pip install -U flake8
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then pip install -U black; fi
 before_script: 
 - cp local_settings.example.py local_settings.py
 - psql -c "create user decide with password 'decide'"
 - psql -c "create database decide owner decide"
 - python manage.py migrate
 script: 
+- flake8 --statistics --count --ignore E501,E201,E202,E231 --max-complexity=10 --benchmark --exit-zero
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6 ]]; then black --check --diff .; fi
 - python manage.py test
 addons:
     postgresql: "9.6"
