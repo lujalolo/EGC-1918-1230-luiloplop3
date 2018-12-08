@@ -21,12 +21,10 @@
         <input type="password" id="password2" name="password2" value=""/>
         <br/>
         <label for="birthDate">{% trans " Birth date" %}</label>
-        <input type="date" id="birthDate" name="birthDate" value=""/>
+        <input type="datetime-local" id="birthDate" name="birthDate" value=""/>
         <br/>
         <label for="gender">{% trans "Gender" %}</label>
-        <input type="radio" id="male" name="gender" value="male"/>Male
-        <input type="radio" id="female" name="gender" value="female"/>Female
-        <input type="radio" id="other" name="gender" value="other"/>Other
+        <input type="text" id="gender" name="gender" value=""/>
         <br/>
         <input type="submit" value="{% trans "Sign up" %}" onClick="signUp()"/>
     </div>
@@ -82,7 +80,9 @@
             var data = {
                 username: document.querySelector("#username_signup").value,
                 password1: document.querySelector("#password1").value,
-                password2: document.querySelector("#password2").value
+                password2: document.querySelector("#password2").value,
+                birthdate: document.querySelector("#birthDate").value,
+                gender: document.querySelector("#gender").value
             };
             postData("{{auth_url}}" + "/authentication/signup/", data)
               .then(data => {
