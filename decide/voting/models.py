@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-
+import json
+import os
 from base import mods
 from base.models import Auth, Key
 
@@ -38,6 +37,8 @@ class Voting(models.Model):
 
     pub_key = models.OneToOneField(Key, related_name='voting', blank=True, null=True, on_delete=models.SET_NULL)
     auths = models.ManyToManyField(Auth, related_name='votings')
+
+    custom_url = models.CharField(max_length=100, blank=True)
 
     tally = JSONField(blank=True, null=True)
     postproc = JSONField(blank=True, null=True)
@@ -95,7 +96,7 @@ class Voting(models.Model):
         self.tally = response.json()
         self.save()
 
-        self.do_postproc()
+        return self.do_postproc()
 
     def do_postproc(self):
         tally = self.tally
@@ -113,11 +114,21 @@ class Voting(models.Model):
                 'votes': votes
             })
 
-        data = { 'type': 'IDENTITY', 'options': opts }
+        data = {'type': 'IDENTITY', 'options': opts}
+        directory = "voting/tallies/"
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        file_name = 'tally_voting'+str(self.id)
+        with open(directory+file_name+'.json', 'w') as outfile:
+            json.dump(data, outfile)
+            print("JSON tally dumped")
+
         postp = mods.post('postproc', json=data)
 
         self.postproc = postp
         self.save()
+
+        return directory+file_name+'.json'
 
     def __str__(self):
         return self.name
