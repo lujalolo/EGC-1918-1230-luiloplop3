@@ -1,3 +1,4 @@
+import { LoginPage } from './../pages/login/login';
 import { ConfigService } from './../config/configService';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
@@ -14,7 +15,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   declarations: [
     MyApp,
     HomePage,
-    ListPage
+    ListPage,
+    LoginPage,
   ],
   imports: [
     BrowserModule,
