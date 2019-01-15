@@ -22,7 +22,3 @@ script:
 - python manage.py test
 addons:
     postgresql: "9.6"
-branches:
-  only:
-  -master
-  
